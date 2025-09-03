@@ -63,12 +63,12 @@ PROTECTED_SUBDOMAINS = "admin,secure"
 LINK_PUBLIC = "https://www.public.com/"
 LINK_ADMIN = "https://admin.com/"
 LINK_SECURE = "https://secure.com/"
-USER_ADMIN = "adminuser"
-PASS_ADMIN = "adminpassword"
-USER_SECURE = "secureuser"
-PASS_SECURE = "securepassword"
-FALLBACK_USER = "fallbackuser"
-FALLBACK_PASS = "fallbackpassword"
+USER_ADMIN = "admin_user"
+PASS_ADMIN = "admin_password"
+USER_SECURE = "secure_user"
+PASS_SECURE = "secure_password"
+FALLBACK_USER = "fallback_user"
+FALLBACK_PASS = "fallback_password"
 ```
 
 ### How It Works
