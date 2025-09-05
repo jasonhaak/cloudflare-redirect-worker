@@ -1,9 +1,8 @@
 import { securityHeaders, authChallengeHeaders } from "./security-headers.js";
 import { parseCommaList, hostIsAllowed, extractSubdomain } from "./host.js";
-import { getClientIdFromCloudflare } from "./client.js";
+import { getClientIdFromCloudflare, respond, setHeaders } from "./utils.js";
 import { isRateLimited, registerFailedAttempt, clearFailures, rateLimitRetryHeaders, MAX_AUTH_HEADER_LENGTH } from "./ratelimit.js";
 import { checkBasicAuth, isNonEmpty } from "./auth.js";
-import { respond, setHeaders } from "./utils.js";
 
 // Helper to get redirect target from env by subdomain
 function getRedirectTarget(subdomain, env) {

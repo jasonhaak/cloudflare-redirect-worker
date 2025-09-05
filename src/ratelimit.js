@@ -1,14 +1,14 @@
-const { securityHeaders } = require('./security-headers');
+import { securityHeaders } from './security-headers.js';
 
-const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
-const MAX_FAILED_ATTEMPTS = 10;
-const MAX_FAILED_ATTEMPTS_UNKNOWN = 3; // Stricter for unknown clients
+export const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
+export const MAX_FAILED_ATTEMPTS = 10;
+export const MAX_FAILED_ATTEMPTS_UNKNOWN = 3; // Stricter for unknown clients
 
 // Capacity & eviction to avoid unbounded memory growth
-const MAX_RATE_LIMIT_KEYS = 10_000;
+export const MAX_RATE_LIMIT_KEYS = 10_000;
 
 // Authorization header sanity limit to reduce header-based DoS attempts
-const MAX_AUTH_HEADER_LENGTH = 4096;
+export const MAX_AUTH_HEADER_LENGTH = 4096;
 
 // Internal bucket: Key -> { fails, resetAt }
 const RATE_LIMIT_BUCKET = new Map();
@@ -35,14 +35,14 @@ function limitFor(clientId) {
   return clientId === "unknown" ? MAX_FAILED_ATTEMPTS_UNKNOWN : MAX_FAILED_ATTEMPTS;
 }
 
-function isRateLimited(clientId, subdomain) {
+export function isRateLimited(clientId, subdomain) {
   const key = makeRateLimitKey(clientId, subdomain);
   pruneIfExpired(key);
   const entry = RATE_LIMIT_BUCKET.get(key);
   return !!entry && entry.fails >= limitFor(clientId);
 }
 
-function registerFailedAttempt(clientId, subdomain) {
+export function registerFailedAttempt(clientId, subdomain) {
   const key = makeRateLimitKey(clientId, subdomain);
   pruneIfExpired(key);
   const currentTime = nowMs();
@@ -55,7 +55,7 @@ function registerFailedAttempt(clientId, subdomain) {
   entry.fails += 1;
 }
 
-function clearFailures(clientId, subdomain) {
+export function clearFailures(clientId, subdomain) {
   RATE_LIMIT_BUCKET.delete(makeRateLimitKey(clientId, subdomain));
 }
 
@@ -65,25 +65,8 @@ function remainingWindowSeconds(clientId, subdomain) {
   return Math.ceil(Math.max(0, entry.resetAt - nowMs()) / 1000);
 }
 
-function rateLimitRetryHeaders(clientId, subdomain) {
+export function rateLimitRetryHeaders(clientId, subdomain) {
   return securityHeaders({ "Retry-After": String(remainingWindowSeconds(clientId, subdomain)) });
 }
 
-module.exports = {
-  RATE_LIMIT_WINDOW_MS,
-  MAX_FAILED_ATTEMPTS,
-  MAX_FAILED_ATTEMPTS_UNKNOWN,
-  MAX_RATE_LIMIT_KEYS,
-  MAX_AUTH_HEADER_LENGTH,
-  RATE_LIMIT_BUCKET,
-  makeRateLimitKey,
-  nowMs,
-  pruneIfExpired,
-  evictIfNeeded,
-  limitFor,
-  isRateLimited,
-  registerFailedAttempt,
-  clearFailures,
-  remainingWindowSeconds,
-  rateLimitRetryHeaders
-};
+export { RATE_LIMIT_BUCKET, makeRateLimitKey, nowMs, pruneIfExpired, evictIfNeeded, limitFor };

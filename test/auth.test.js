@@ -1,4 +1,4 @@
-const { checkBasicAuth, constantTimeEqual, isNonEmpty } = require('../src/auth');
+import { checkBasicAuth, constantTimeEqual, isNonEmpty } from '../src/auth.js';
 
 describe('auth.js', () => {
   describe('isNonEmpty', () => {
@@ -48,4 +48,3 @@ describe('auth.js', () => {
     });
   });
 });
-

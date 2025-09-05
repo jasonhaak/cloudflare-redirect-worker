@@ -1,4 +1,4 @@
-const { securityHeaders, authChallengeHeaders } = require('../src/security-headers');
+import { securityHeaders, authChallengeHeaders } from '../src/security-headers.js';
 
 describe('security-headers.js', () => {
   it('returns all required security headers', () => {
@@ -13,4 +13,3 @@ describe('security-headers.js', () => {
     expect(headers['WWW-Authenticate']).toContain('Basic');
   });
 });
-

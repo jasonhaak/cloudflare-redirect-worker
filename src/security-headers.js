@@ -1,5 +1,5 @@
 // Secure HTTP headers
-function securityHeaders(extra = {}) {
+export function securityHeaders(extra = {}) {
   return {
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
@@ -16,22 +16,20 @@ function securityHeaders(extra = {}) {
 }
 
 // WWW-Authenticate header for Basic Auth
-function authChallengeHeaders() {
+export function authChallengeHeaders() {
   return securityHeaders({
     "WWW-Authenticate": 'Basic realm="Secure Redirect", charset="UTF-8"',
   });
 }
 
 // Merge new headers with response
-function setHeaders(response, headers) {
+export function setHeaders(response, headers) {
   const merged = new Headers(response.headers);
   for (const [k, v] of Object.entries(headers)) merged.set(k, v);
   return new Response(response.body, { status: response.status, headers: merged });
 }
 
 // Creates a new response with the given body, status, and headers
-function respond(body, status, headers) {
+export function respond(body, status, headers) {
   return new Response(body, { status, headers });
 }
-
-module.exports = { securityHeaders, authChallengeHeaders, setHeaders, respond };

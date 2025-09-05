@@ -1,9 +1,9 @@
-function isNonEmpty(value) {
+export function isNonEmpty(value) {
   return typeof value === "string" && value.trim().length > 0;
 }
 
 // Checks Basic Auth header against expected credentials
-function checkBasicAuth(authorizationHeader, expectedUser, expectedPass) {
+export function checkBasicAuth(authorizationHeader, expectedUser, expectedPass) {
   if (!authorizationHeader.startsWith("Basic ")) return false;
 
   // Extract and decode credentials from header
@@ -21,12 +21,10 @@ function checkBasicAuth(authorizationHeader, expectedUser, expectedPass) {
 }
 
 // Constant time string comparison
-function constantTimeEqual(a, b) {
+export function constantTimeEqual(a, b) {
   if (typeof a !== "string" || typeof b !== "string") return false;
   if (a.length !== b.length) return false;
   let diff = 0;
   for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
   return diff === 0;
 }
-
-module.exports = { isNonEmpty, checkBasicAuth, constantTimeEqual };

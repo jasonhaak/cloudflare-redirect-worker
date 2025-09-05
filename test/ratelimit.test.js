@@ -1,4 +1,4 @@
-const ratelimit = require('../src/ratelimit');
+import * as ratelimit from '../src/ratelimit.js';
 
 describe('ratelimit.js', () => {
   beforeEach(() => {
@@ -42,4 +42,3 @@ describe('ratelimit.js', () => {
     expect(headers['Retry-After']).toBeDefined();
   });
 });
-

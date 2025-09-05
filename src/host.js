@@ -1,17 +1,17 @@
 // Parsing allowed host suffixes from environment variables
-function parseCommaList(value) {
+export function parseCommaList(value) {
   if (!value) return [];
   return value.split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
 }
 
 // Returns true if hostname matches any suffix or if suffixes is empty
-function hostIsAllowed(hostname, suffixes) {
+export function hostIsAllowed(hostname, suffixes) {
   if (suffixes.length === 0) return true;
   return suffixes.some(suffix => hostname.endsWith(suffix));
 }
 
 // Extracts everything before the allowed host suffix as subdomain
-function extractSubdomain(hostname) {
+export function extractSubdomain(hostname) {
   const suffixes = parseCommaList(
     typeof process !== "undefined" && process.env && process.env.ALLOWED_HOST_SUFFIXES
       ? process.env.ALLOWED_HOST_SUFFIXES
@@ -25,5 +25,3 @@ function extractSubdomain(hostname) {
   }
   return "";
 }
-
-module.exports = { parseCommaList, hostIsAllowed, extractSubdomain };

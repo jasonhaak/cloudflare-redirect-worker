@@ -1,4 +1,4 @@
-const { parseCommaList, hostIsAllowed, extractSubdomain } = require('../src/host');
+import { parseCommaList, hostIsAllowed, extractSubdomain } from '../src/host.js';
 
 describe('host.js', () => {
   describe('parseCommaList', () => {
@@ -40,4 +40,3 @@ describe('host.js', () => {
     });
   });
 });
-

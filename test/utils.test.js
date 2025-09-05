@@ -1,4 +1,4 @@
-const { getClientIdFromCloudflare } = require('../src/utils');
+import { getClientIdFromCloudflare } from '../src/utils.js';
 
 describe('utils.js', () => {
   describe('getClientIdFromCloudflare', () => {
@@ -14,4 +14,3 @@ describe('utils.js', () => {
     });
   });
 });
-
