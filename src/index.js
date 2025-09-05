@@ -48,7 +48,7 @@ export default {
     }
 
     // Get subdomain
-    const subdomain = extractSubdomain(hostname);
+    const subdomain = extractSubdomain(hostname, env.ALLOWED_HOST_SUFFIXES);
 
     // Get redirect target from env
     const targetUrl = getRedirectTarget(subdomain, env);

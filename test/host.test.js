@@ -24,20 +24,16 @@ describe('host.js', () => {
   });
 
   describe('extractSubdomain', () => {
-    beforeAll(() => {
-      globalThis.ALLOWED_HOST_SUFFIXES = '.example.com,.test.org';
-    });
-    afterAll(() => {
-      delete globalThis.ALLOWED_HOST_SUFFIXES;
-    });
+    const ALLOWED_HOST_SUFFIXES = '.example.com,.test.org';
+
     it('extracts subdomain before allowed suffix', () => {
-      expect(extractSubdomain('foo.example.com')).toBe('foo');
-      expect(extractSubdomain('bar.baz.example.com')).toBe('bar.baz');
-      expect(extractSubdomain('example.com')).toBe('');
-      expect(extractSubdomain('foo.test.org')).toBe('foo');
+      expect(extractSubdomain('foo.example.com', ALLOWED_HOST_SUFFIXES)).toBe('foo');
+      expect(extractSubdomain('bar.baz.example.com', ALLOWED_HOST_SUFFIXES)).toBe('bar.baz');
+      expect(extractSubdomain('example.com', ALLOWED_HOST_SUFFIXES)).toBe('');
+      expect(extractSubdomain('foo.test.org', ALLOWED_HOST_SUFFIXES)).toBe('foo');
     });
     it('returns empty string if no match', () => {
-      expect(extractSubdomain('foo.bar')).toBe('');
+      expect(extractSubdomain('foo.bar', ALLOWED_HOST_SUFFIXES)).toBe('');
     });
   });
 });

@@ -12,12 +12,8 @@ export function hostIsAllowed(hostname, suffixes) {
 }
 
 // Extracts everything before the allowed host suffix as subdomain
-export function extractSubdomain(hostname) {
-  const suffixes = parseCommaList(
-    typeof process !== "undefined" && process.env && process.env.ALLOWED_HOST_SUFFIXES
-      ? process.env.ALLOWED_HOST_SUFFIXES
-      : (globalThis.ALLOWED_HOST_SUFFIXES || "")
-  );
+export function extractSubdomain(hostname, allowedHostSuffixes) {
+  const suffixes = parseCommaList(allowedHostSuffixes);
   for (const suffix of suffixes) {
     if (hostname.endsWith(suffix)) {
       const sub = hostname.slice(0, hostname.length - suffix.length);
