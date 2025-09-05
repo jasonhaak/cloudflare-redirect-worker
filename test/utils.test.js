@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { getClientIdFromCloudflare } from '../src/utils.js';
 
 describe('utils.js', () => {

@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { securityHeaders, authChallengeHeaders } from '../src/security-headers.js';
 
 describe('security-headers.js', () => {

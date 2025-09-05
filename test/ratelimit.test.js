@@ -1,3 +1,4 @@
+import { describe, it, beforeEach, expect } from 'vitest';
 import * as ratelimit from '../src/ratelimit.js';
 
 describe('ratelimit.js', () => {

@@ -1,3 +1,4 @@
+import { describe, it, beforeEach, beforeAll, afterAll, expect } from 'vitest';
 import { parseCommaList, hostIsAllowed, extractSubdomain } from '../src/host.js';
 
 describe('host.js', () => {

@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { checkBasicAuth, constantTimeEqual, isNonEmpty } from '../src/auth.js';
 
 describe('auth.js', () => {
