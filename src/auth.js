@@ -28,3 +28,5 @@ function constantTimeEqual(a, b) {
   for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
   return diff === 0;
 }
+
+module.exports = { isNonEmpty, checkBasicAuth, constantTimeEqual };

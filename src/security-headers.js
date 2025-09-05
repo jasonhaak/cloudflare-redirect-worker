@@ -33,3 +33,5 @@ function setHeaders(response, headers) {
 function respond(body, status, headers) {
   return new Response(body, { status, headers });
 }
+
+module.exports = { securityHeaders, authChallengeHeaders, setHeaders, respond };

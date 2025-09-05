@@ -1,3 +1,5 @@
+const { securityHeaders } = require('./security-headers');
+
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
 const MAX_FAILED_ATTEMPTS = 10;
 const MAX_FAILED_ATTEMPTS_UNKNOWN = 3; // Stricter for unknown clients
@@ -66,3 +68,22 @@ function remainingWindowSeconds(clientId, subdomain) {
 function rateLimitRetryHeaders(clientId, subdomain) {
   return securityHeaders({ "Retry-After": String(remainingWindowSeconds(clientId, subdomain)) });
 }
+
+module.exports = {
+  RATE_LIMIT_WINDOW_MS,
+  MAX_FAILED_ATTEMPTS,
+  MAX_FAILED_ATTEMPTS_UNKNOWN,
+  MAX_RATE_LIMIT_KEYS,
+  MAX_AUTH_HEADER_LENGTH,
+  RATE_LIMIT_BUCKET,
+  makeRateLimitKey,
+  nowMs,
+  pruneIfExpired,
+  evictIfNeeded,
+  limitFor,
+  isRateLimited,
+  registerFailedAttempt,
+  clearFailures,
+  remainingWindowSeconds,
+  rateLimitRetryHeaders
+};

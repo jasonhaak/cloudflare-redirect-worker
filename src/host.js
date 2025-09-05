@@ -10,8 +10,20 @@ function hostIsAllowed(hostname, suffixes) {
   return suffixes.some(suffix => hostname.endsWith(suffix));
 }
 
-// Extracts first label as subdomain or empty string
+// Extracts everything before the allowed host suffix as subdomain
 function extractSubdomain(hostname) {
-  const labels = hostname.split(".");
-  return labels.length > 2 ? labels[0].toLowerCase() : (labels.length >= 2 ? labels[0].toLowerCase() : "");
+  const suffixes = parseCommaList(
+    typeof process !== "undefined" && process.env && process.env.ALLOWED_HOST_SUFFIXES
+      ? process.env.ALLOWED_HOST_SUFFIXES
+      : (globalThis.ALLOWED_HOST_SUFFIXES || "")
+  );
+  for (const suffix of suffixes) {
+    if (hostname.endsWith(suffix)) {
+      const sub = hostname.slice(0, hostname.length - suffix.length);
+      return sub.endsWith(".") ? sub.slice(0, -1) : sub;
+    }
+  }
+  return "";
 }
+
+module.exports = { parseCommaList, hostIsAllowed, extractSubdomain };

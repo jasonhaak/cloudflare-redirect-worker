@@ -5,3 +5,5 @@ function getClientIdFromCloudflare(request) {
   if (!ip || ip.length > 64) return "unknown";
   return ip;
 }
+
+module.exports = { getClientIdFromCloudflare };
