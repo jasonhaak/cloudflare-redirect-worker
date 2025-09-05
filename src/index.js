@@ -24,7 +24,7 @@ function getCredentials(subdomain, env) {
 
 export default {
   // Main entry for Cloudflare Worker
-  async fetch(request, env, ctx) {
+  async fetch(request, env) {
     const url = new URL(request.url);
 
     // Enforce HTTPS
