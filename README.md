@@ -3,6 +3,8 @@ A Cloudflare Worker for secure, configurable HTTP redirects based on subdomain.
 This worker is designed for scenarios where you need to route requests for specific subdomains (such as `routing.example.com`) to external URLs, while enforcing security and access controls.
 It is ideal for protecting sensitive redirect endpoints with Basic Auth and rate limiting, ensuring only requests to allowed hostnames are processed.
 
+---
+
 ## Features
 - **HTTPS Enforcement**: All requests are redirected to HTTPS if received over HTTP.
 - **Subdomain-based Redirects**: Requests to specific subdomains are redirected to URLs configured via environment variables.
@@ -35,6 +37,8 @@ You can set environment variables in your `wrangler.toml` file or via the Cloudf
 ```
 wrangler deploy
 ```
+
+---
 
 ## Configuration
 > **Note:** Never publish your environment variables publicly, as it may expose sensitive secrets such as authentication credentials and redirect targets.
@@ -82,6 +86,17 @@ Deploy to Cloudflare Workers:
 ```
 wrangler deploy
 ```
+
+---
+
+## Testing
+Run all unit tests with:
+```
+npm test
+```
+Tests cover authentication, host parsing, rate limiting, security headers, and utility functions.
+
+---
 
 ## Author & Licence
 This code was written by Jason Haak and is licensed under the MIT licence.
