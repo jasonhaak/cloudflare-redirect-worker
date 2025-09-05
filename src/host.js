@@ -1,7 +1,8 @@
 // Parsing allowed host suffixes from environment variables
 export function parseCommaList(value) {
   if (!value) return [];
-  return value.split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
+  // Remove all whitespace characters from each suffix
+  return value.split(",").map(s => s.replace(/\s+/g, "").toLowerCase()).filter(Boolean);
 }
 
 // Returns true if hostname matches any suffix or if suffixes is empty
