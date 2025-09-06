@@ -41,12 +41,12 @@ Cloudflare always requires a code source (repository or ZIP) to deploy a Worker.
 - `PROTECTED_SUBDOMAINS`
     - Comma-separated list of subdomains that require authentication
 - `LINK_<SUBDOMAIN>`
-    - Redirect target URL for each subdomain.
+    - Redirect target URL for each subdomain
     - Example: `LINK_FOO` for `foo.example.com`
     - **Multi-level subdomains**: Dots are replaced with underscores
     - Example: `api.v1.example.com` → `LINK_API_V1`
 - `USER_<SUBDOMAIN>`, `PASS_<SUBDOMAIN>`
-    - Credentials for each protected subdomain.
+    - Credentials for each protected subdomain
     - Example: `USER_FOO`, `PASS_FOO` for `foo.example.com`
     - **Multi-level subdomains**: Dots are replaced with underscores
     - Example: `api.v1.example.com` → `USER_API_V1`, `PASS_API_V1`
