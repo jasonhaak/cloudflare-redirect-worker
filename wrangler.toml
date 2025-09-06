@@ -1,3 +1,4 @@
 name = "cloudflare-redirect-worker"
 main = "src/index.js"
 compatibility_date = "2025-09-05"
+keep_vars = true
