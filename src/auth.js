@@ -23,10 +23,20 @@ export function checkBasicAuth(authorizationHeader, expectedUser, expectedPass) 
 }
 
 // Constant time string comparison
+// Processes both strings fully to avoid timing leaks from early returns
 export function constantTimeEqual(a, b) {
   if (typeof a !== "string" || typeof b !== "string") return false;
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+
+  // Always process to the maximum length to avoid timing leaks
+  const maxLen = Math.max(a.length, b.length);
+  let diff = a.length ^ b.length; // XOR lengths to detect mismatch
+
+  // Always iterate through maxLen characters to maintain constant time
+  for (let i = 0; i < maxLen; i++) {
+    const charA = i < a.length ? a.charCodeAt(i) : 0;
+    const charB = i < b.length ? b.charCodeAt(i) : 0;
+    diff |= charA ^ charB;
+  }
+
   return diff === 0;
 }
