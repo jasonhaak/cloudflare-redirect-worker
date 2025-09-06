@@ -6,7 +6,6 @@ import {
   authorizeProtectedSubdomain,
   handleRedirect
 } from '../src/index.js';
-import * as ratelimit from '../src/ratelimit.js';
 import { base64Encode } from '../src/base64.js';
 
 // Mock dependencies
