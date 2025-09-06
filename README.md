@@ -27,6 +27,8 @@ Cloudflare always requires a code source (repository or ZIP) to deploy a Worker.
 - **Git**: Connect your forked repository directly to your GitHub/GitLab account in the Cloudflare Dashboard. Cloudflare will build and deploy automatically.
 - **ZIP**: Upload your prepared ZIP file using the Dashboard’s editor or deployment UI.
 
+> Attention: When using Cloudflare's Git integration, go to **Settings -> Build > Branch Control** in your Worker project. Make sure to **deactivate** (uncheck) the option for enabling builds for non-production branches. If this setting is active, any push to your `develop` (or other non-production) branch will trigger a deployment to your Worker, which may not be desired for production stability.
+
 ### 4. Update DNS
 - Navigate to **Settings -> Routes** and add a domain or route for the Worker.
 - Point DNS records for your subdomains to the Worker you configured.
@@ -81,10 +83,6 @@ FALLBACK_PASS = "fallback_password"
 2. It extracts the subdomain and resolves its redirect target from `LINK_<SUBDOMAIN>`.
 3. If the subdomain is listed in `PROTECTED_SUBDOMAINS`, the worker enforces Basic Auth using configured credentials.
 4. Failed auth attempts are rate-limited per client.
-5. Valid requests are redirected with proper security headers.
-
-## Installation & Development
-For developers looking to customize or extend the worker, follow these steps.
 
 1. **Clone the Repository**
     ```bash
@@ -113,5 +111,3 @@ The test suite covers authentication, host parsing, rate limiting, security head
 
 ## Author & Licence
 This code was written by Jason Haak and is licensed under the MIT licence.
-
-
