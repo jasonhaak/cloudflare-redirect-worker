@@ -1,14 +1,21 @@
 # cloudflare-redirect-worker
-A Cloudflare Worker for secure, configurable HTTP redirects by subdomain.  It routes requests for specific subdomains (for example `foo.example.com`) to target URLs (for example `secure.com`).  It also provides optional Basic Auth with support for both single and multiple user/password pairs, rate limiting and security headers.
-
 [![Release](https://img.shields.io/github/v/release/jasonhaak/cloudflare-redirect-worker)](https://github.com/jasonhaak/cloudflare-redirect-worker/releases/latest)
 [![CI](https://img.shields.io/github/actions/workflow/status/jasonhaak/cloudflare-redirect-worker/ci.yml?branch=main&logo=github)](https://github.com/jasonhaak/cloudflare-redirect-worker/actions/workflows/ci.yml)
 [![Coverage](https://codecov.io/github/jasonhaak/cloudflare-redirect-worker/graph/badge.svg?token=OJ2SFEQQAW)](https://codecov.io/github/jasonhaak/cloudflare-redirect-worker)
-[![License](https://img.shields.io/github/license/jasonhaak/cloudflare-redirect-worker)](https://github.com/jasonhaak/cloudflare-redirect-worker/blob/main/LICENSE)
-[![Last Commit](https://img.shields.io/github/last-commit/jasonhaak/cloudflare-redirect-worker)](https://github.com/jasonhaak/cloudflare-redirect-worker/commits/main)
-[![Issues](https://img.shields.io/github/issues/jasonhaak/cloudflare-redirect-worker)](https://github.com/jasonhaak/cloudflare-redirect-worker/issues)
-[![Pull Requests](https://img.shields.io/github/issues-pr/jasonhaak/cloudflare-redirect-worker)](https://github.com/jasonhaak/cloudflare-redirect-worker/pulls)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare)](https://workers.cloudflare.com/)
 
+A Cloudflare Worker for secure, configurable HTTP redirects by subdomain.  It routes requests for specific subdomains (for example `foo.example.com`) to target URLs (for example `secure.com`).  It also provides optional Basic Auth with support for both single and multiple user/password pairs, rate limiting and security headers.
+
+## Table of Contents
+- [Features](#features)
+- [Quick Start](#quick-start)
+- [Environment Variables](#environment-variables)
+  - [Variable Descriptions](#variable-descriptions)
+  - [Example Configuration](#example-configuration)
+- [How it Works](#how-it-works)
+- [Installation & Development](#installation--development)
+- [Testing](#testing)
+- [Author & Licence](#author--licence)
 
 ## Features
 - **HTTPS Enforcement**: Redirects HTTP requests to HTTPS
@@ -23,33 +30,34 @@ You will learn how to deploy the worker to Cloudflare, configure secrets and poi
 
 ### 1. Prepare the Codebase
 Cloudflare always requires a code source (repository or ZIP) to deploy a Worker. Choose one of the following:
-- **Git (recommended)**: Fork this repository into your own GitHub/GitLab account
-- **ZIP (manual upload)**: Download the code as a ZIP file and prepare it for upload
+- **Git (recommended)**: Fork this repository into your own GitHub/GitLab account.
+- **ZIP (manual upload)**: Download the code as a ZIP file and prepare it for upload.
 
 ### 2. Add a Worker in Cloudflare
-- Log in to the [Cloudflare Dashboard](https://dash.cloudflare.com/)
-- Navigate to **Workers & Pages -> Workers** and create a new Worker with the name `cloudflare-redirect-worker`
+- Log in to the [Cloudflare Dashboard](https://dash.cloudflare.com/).
+- Navigate to **Workers & Pages → Workers** and create a new Worker with the name `cloudflare-redirect-worker`.
 
 ### 3. Add Environment Variables
 > **Note**: See the [Environment Variables](#environment-variables) section below for variable descriptions and an example configuration.
 
 There are multiple ways to provide environment variables for your Worker:
-- Set them directly in the Cloudflare Dashboard (**Worker -> Settings -> Variables & Secrets**). This keeps sensitive values out of your source code and version control.
+- Set them directly in the Cloudflare Dashboard (**Worker → Settings → Variables & Secrets**). This keeps sensitive values out of your source code and version control.
 - You can define them in your `wrangler.toml` file (not recommended for secrets or sensitive data if your repository is public).
 - You can deliver them through your CI/CD pipeline or other deployment automation.
 
 > **Important:** If you deploy using **GitHub/GitLab integration**, any variables set in the Cloudflare Dashboard as plain text or JSON will be **overwritten** during deployment.  
 > To prevent this:
-> - Add `--keep-vars` to your deployment command in Settings → Build → Deploy command (e.g., `npx wrangler deploy --keep-vars`), **or**
-> - set your variables as *secrets* in the Dashboard, which are always preserved.
+> - Option 1: Add `--keep-vars` to your deployment command in Settings → Build → Deploy command (e.g., `npx wrangler deploy --keep-vars`).
+> - Option 2: Set your variables as *secrets* in the Dashboard, which are always preserved.
 
 ### 4. Deploy via the Cloudflare Dashboard
 - **Git**: Connect your forked repository directly to your GitHub/GitLab account in the Cloudflare Dashboard. Cloudflare will build and deploy automatically.
-    - **Important:** When using Cloudflare Git integration, go to **Settings -> Build > Branch Control** in your Worker project. Make sure to **deactivate** (uncheck) the option for enabling builds for non-production branches. If this setting is active, any push to your `develop` (or other non-production) branch will trigger a deployment to your Worker, which may not be desired for production stability.
 - **ZIP**: Upload your prepared ZIP file using the Dashboard’s editor or deployment UI.
 
+> **Important:** When using Cloudflare Git integration, go to **Settings → Build > Branch Control** in your Worker project. Make sure to **deactivate** (uncheck) the option for enabling builds for non-production branches. If this setting is active, any push to your `develop` (or other non-production) branch will trigger a deployment to your Worker, which may not be desired for production stability.
+
 ### 5. Update DNS
-- Navigate to **Settings -> Routes** and add a domain or route for the Worker.
+- Navigate to **Settings → Routes** and add a domain or route for the Worker.
 - Point DNS records for your subdomains to the Worker you configured.
 
 ## Environment Variables
@@ -123,7 +131,7 @@ FALLBACK_PASS = "fallback_password"
     ```bash
     npm install
     ```
-3. **Configure Environment Variables**:
+3. **Configure Environment Variables**
     - You can set environment variables in your `wrangler.toml` file or via the Cloudflare dashboard.
 4. **Deploy the Worker**
     ```bash
