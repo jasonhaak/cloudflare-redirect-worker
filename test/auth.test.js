@@ -47,5 +47,10 @@ describe('auth.js', () => {
       const b64 = Buffer.from('userpass').toString('base64');
       expect(checkBasicAuth('Basic ' + b64, 'user', 'pass')).toBe(false);
     });
+    it('returns false for undefined or empty authorization header', () => {
+      expect(checkBasicAuth(undefined, 'user', 'pass')).toBe(false);
+      expect(checkBasicAuth(null, 'user', 'pass')).toBe(false);
+      expect(checkBasicAuth('', 'user', 'pass')).toBe(false);
+    });
   });
 });

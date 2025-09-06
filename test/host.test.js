@@ -1,4 +1,4 @@
-import { describe, it, beforeAll, afterAll, expect } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { parseCommaList, hostIsAllowed, extractSubdomain } from '../src/host.js';
 
 describe('host.js', () => {
@@ -11,6 +11,9 @@ describe('host.js', () => {
     it('lowercases values', () => {
       expect(parseCommaList('A,B')).toEqual(['a', 'b']);
     });
+    it('handles undefined input', () => {
+      expect(parseCommaList(undefined)).toEqual([]);
+    });
   });
 
   describe('hostIsAllowed', () => {
@@ -20,6 +23,10 @@ describe('host.js', () => {
     it('matches allowed suffixes', () => {
       expect(hostIsAllowed('foo.example.com', ['.example.com'])).toBe(true);
       expect(hostIsAllowed('foo.example.org', ['.example.com'])).toBe(false);
+    });
+    it('matches any of multiple suffixes', () => {
+      expect(hostIsAllowed('foo.example.com', ['.example.org', '.example.com'])).toBe(true);
+      expect(hostIsAllowed('foo.example.net', ['.example.com', '.example.org'])).toBe(false);
     });
   });
 
@@ -34,6 +41,10 @@ describe('host.js', () => {
     });
     it('returns empty string if no match', () => {
       expect(extractSubdomain('foo.bar', ALLOWED_HOST_SUFFIXES)).toBe('');
+    });
+    it('handles edge cases with hostname exactly matching suffix', () => {
+      expect(extractSubdomain('example.com', '.example.com')).toBe('');
+      expect(extractSubdomain('test.org', '.example.com,.test.org')).toBe('');
     });
   });
 });

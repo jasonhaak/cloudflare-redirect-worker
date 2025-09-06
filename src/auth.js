@@ -4,7 +4,7 @@ export function isNonEmpty(value) {
 
 // Checks Basic Auth header against expected credentials
 export function checkBasicAuth(authorizationHeader, expectedUser, expectedPass) {
-  if (!authorizationHeader.startsWith("Basic ")) return false;
+  if (!authorizationHeader || !authorizationHeader.startsWith("Basic ")) return false;
 
   // Extract and decode credentials from header
   const b64 = authorizationHeader.slice(6).trim();
