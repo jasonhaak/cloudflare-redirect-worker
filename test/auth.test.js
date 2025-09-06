@@ -53,5 +53,10 @@ describe('auth.js', () => {
       expect(checkBasicAuth(null, 'user', 'pass')).toBe(false);
       expect(checkBasicAuth('', 'user', 'pass')).toBe(false);
     });
+    it('returns false if decoded credentials lack a colon', () => {
+      // 'dXNlcnBhc3M=' is base64 for 'userpass' (no colon)
+      const malformed = 'Basic dXNlcnBhc3M=';
+      expect(checkBasicAuth(malformed, 'user', 'pass')).toBe(false);
+    });
   });
 });

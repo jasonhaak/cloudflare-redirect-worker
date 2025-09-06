@@ -125,4 +125,12 @@ describe('ratelimit.js', () => {
     expect(newRetryAfter).toBeGreaterThan(0);
     expect(newRetryAfter).toBeLessThanOrEqual(ratelimit.RATE_LIMIT_WINDOW_MS / 2 / 1000);
   });
+
+  it('returns 0 remaining seconds if no rate limit entry exists', () => {
+    const client = 'no-entry-client';
+    const sub = 'no-entry-sub';
+    // Ensure the bucket is clear
+    ratelimit.RATE_LIMIT_BUCKET && ratelimit.RATE_LIMIT_BUCKET.clear && ratelimit.RATE_LIMIT_BUCKET.clear();
+    expect(ratelimit.rateLimitRetryHeaders(client, sub)['Retry-After']).toBe('0');
+  });
 });

@@ -65,34 +65,92 @@ function getCredentials(subdomain, env) {
   };
 }
 
+// Enforce HTTPS redirection
+export function enforceHttps(url) {
+  if (url.protocol === "http:") {
+    url.protocol = "https:";
+    return Response.redirect(url.toString(), 301);
+  }
+  return null;
+}
+
+// Validate HTTP method
+export function validateMethod(method) {
+  const upperMethod = method.toUpperCase();
+  if (upperMethod !== "GET" && upperMethod !== "HEAD") {
+    return respond("Method Not Allowed", 405, securityHeaders({ "Allow": "GET, HEAD" }));
+  }
+  return null;
+}
+
+// Resolve subdomain and validate host
+export function resolveSubdomain(hostname, allowedHostSuffixes) {
+  if (!hostIsAllowed(hostname, allowedHostSuffixes)) {
+    return { error: respond("Not found", 404, securityHeaders()) };
+  }
+
+  const subdomain = extractSubdomain(hostname, allowedHostSuffixes);
+  return { subdomain };
+}
+
+// Handle authorization for protected subdomains
+export async function authorizeProtectedSubdomain(request, subdomain, env) {
+  const { user: expectedUser, pass: expectedPass } = getCredentials(subdomain, env);
+
+  if (!isNonEmpty(expectedUser) || !isNonEmpty(expectedPass)) {
+    return respond("Not authorized", 401, authChallengeHeaders());
+  }
+
+  const clientId = getClientIdFromCloudflare(request);
+
+  if (isRateLimited(clientId, subdomain)) {
+    return respond("Too many requests", 429, rateLimitRetryHeaders(clientId, subdomain));
+  }
+
+  const authHeader = request.headers.get("Authorization") || "";
+  if (authHeader.length > MAX_AUTH_HEADER_LENGTH) {
+    registerFailedAttempt(clientId, subdomain);
+    return respond("Not authorized", 401, authChallengeHeaders());
+  }
+
+  const isValid = checkBasicAuth(authHeader, expectedUser, expectedPass);
+  if (!isValid) {
+    registerFailedAttempt(clientId, subdomain);
+    return respond("Not authorized", 401, authChallengeHeaders());
+  }
+
+  clearFailures(clientId, subdomain);
+  return null; // Success - no error response
+}
+
+// Handle redirect logic
+export function handleRedirect(targetUrl) {
+  if (targetUrl) {
+    return setHeaders(Response.redirect(targetUrl, 302), securityHeaders());
+  }
+  return respond("Not found", 404, securityHeaders());
+}
+
 export default {
   // Main entry for Cloudflare Worker
   async fetch(request, env) {
     const url = new URL(request.url);
 
     // Enforce HTTPS
-    if (url.protocol === "http:") {
-      url.protocol = "https:";
-      return Response.redirect(url.toString(), 301);
-    }
+    const httpsResponse = enforceHttps(url);
+    if (httpsResponse) return httpsResponse;
 
     // Only allow GET and HEAD
-    const method = request.method.toUpperCase();
-    if (method !== "GET" && method !== "HEAD") {
-      return respond("Method Not Allowed", 405, securityHeaders({ "Allow": "GET, HEAD" }));
-    }
+    const methodResponse = validateMethod(request.method);
+    if (methodResponse) return methodResponse;
 
     // Get cached configuration to reduce per-request parsing overhead
     const { allowedHostSuffixes, protectedSubdomains } = getCachedConfig(env);
 
-    // Restrict handling to known host suffixes (zone binding)
+    // Resolve subdomain and validate host
     const hostname = url.hostname.toLowerCase();
-    if (!hostIsAllowed(hostname, allowedHostSuffixes)) {
-      return respond("Not found", 404, securityHeaders());
-    }
-
-    // Get subdomain
-    const subdomain = extractSubdomain(hostname, allowedHostSuffixes);
+    const { subdomain, error: subdomainError } = resolveSubdomain(hostname, allowedHostSuffixes);
+    if (subdomainError) return subdomainError;
 
     // Get redirect target from env
     const targetUrl = getRedirectTarget(subdomain, env);
@@ -107,38 +165,11 @@ export default {
 
     // Auth and rate limit for protected subdomains
     if (isProtected) {
-      const { user: expectedUser, pass: expectedPass } = getCredentials(subdomain, env);
-
-      if (!isNonEmpty(expectedUser) || !isNonEmpty(expectedPass)) {
-        return respond("Not authorized", 401, authChallengeHeaders());
-      }
-
-      const clientId = getClientIdFromCloudflare(request);
-
-      if (isRateLimited(clientId, subdomain)) {
-        return respond("Too many requests", 429, rateLimitRetryHeaders(clientId, subdomain));
-      }
-
-      const authHeader = request.headers.get("Authorization") || "";
-      if (authHeader.length > MAX_AUTH_HEADER_LENGTH) {
-        registerFailedAttempt(clientId, subdomain);
-        return respond("Not authorized", 401, authChallengeHeaders());
-      }
-
-      const isValid = checkBasicAuth(authHeader, expectedUser, expectedPass);
-      if (!isValid) {
-        registerFailedAttempt(clientId, subdomain);
-        return respond("Not authorized", 401, authChallengeHeaders());
-      }
-      clearFailures(clientId, subdomain);
+      const authResponse = await authorizeProtectedSubdomain(request, subdomain, env);
+      if (authResponse) return authResponse;
     }
 
-    // Redirect if target is configured
-    if (targetUrl) {
-      return setHeaders(Response.redirect(targetUrl, 302), securityHeaders());
-    }
-
-    // Default: Unknown subdomain -> 404
-    return respond("Not found", 404, securityHeaders());
+    // Handle redirect
+    return handleRedirect(targetUrl);
   }
 };

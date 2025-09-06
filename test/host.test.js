@@ -132,5 +132,10 @@ describe('host.js', () => {
       expect(extractSubdomain('example.com', '.example.com')).toBe('');
       expect(extractSubdomain('test.org', '.example.com,.test.org')).toBe('');
     });
+    it('returns subdomain for hostnames with various patterns', () => {
+      expect(extractSubdomain('foo..bar.com', '.com')).toBe('foo..bar');
+      expect(extractSubdomain('foo.-bar.com', '.com')).toBe('foo.-bar');
+      expect(extractSubdomain('foo-.bar.com', '.com')).toBe('foo-.bar');
+    });
   });
 });
