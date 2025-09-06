@@ -1,7 +1,7 @@
 {
   "name": "cloudflare-redirect-worker",
   "version": "1.0.0",
-  "description": "Cloudflare Worker for secure, configurable HTTP redirects based on subdomain.",
+  "description": "Cloudflare Worker for secure, configurable redirects based on subdomain.",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
