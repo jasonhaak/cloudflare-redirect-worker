@@ -25,7 +25,10 @@ There are multiple ways to provide environment variables for your Worker:
 - You can define them in your `wrangler.toml` file (not recommended for secrets or sensitive data if your repository is public).
 - You can deliver them through your CI/CD pipeline or other deployment automation.
 
-> **Important:** When deploying this Worker via GitHub/GitLab integration, any variables set in the Cloudflare Dashboard as plain text or JSON will be **overwritten** during deployment unless you use the `--keep-vars` flag. To avoid losing configuration, set your deployment command to `npx wrangler deploy --keep-vars` in the Cloudflare Dashboard (Settings -> Build -> Deploy command) to ensure that environment variables set in the Dashboard are preserved during deployment. Alternatively, declare variables as *secrets* in the Cloudflare Dashboard when using GitHub/GitLab as your deployment method.
+> **Important:** If you deploy using **GitHub/GitLab integration**, any variables set in the Cloudflare Dashboard as plain text or JSON will be **overwritten** during deployment.  
+> To prevent this:
+> - Add `--keep-vars` to your deployment command in Settings → Build → Deploy command (e.g., `npx wrangler deploy --keep-vars`), **or**
+> - set your variables as *secrets* in the Dashboard, which are always preserved.
 
 ### 3. Deploy via the Dashboard
 - **Git**: Connect your forked repository directly to your GitHub/GitLab account in the Cloudflare Dashboard. Cloudflare will build and deploy automatically.
