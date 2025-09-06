@@ -25,16 +25,16 @@ Cloudflare always requires a code source (repository or ZIP) to deploy a Worker.
 
 ### 3. Deploy via the Dashboard
 - **Git**: Connect your forked repository directly to your GitHub/GitLab account in the Cloudflare Dashboard. Cloudflare will build and deploy automatically.
+    - **Important:** In the Cloudflare Dashboard, go to **Settings -> Build -> Deploy command** and set the deployment command to `npx wrangler deploy --keep-vars`. This ensures that environment variables set in the Cloudflare Dashboard are preserved during deployment. If you do not use `--keep-vars`, any variables set in the Dashboard will be overwritten by those in your repository or deployment pipeline.
+    - **Important:** When using Cloudflare Git integration, go to **Settings -> Build > Branch Control** in your Worker project. Make sure to **deactivate** (uncheck) the option for enabling builds for non-production branches. If this setting is active, any push to your `develop` (or other non-production) branch will trigger a deployment to your Worker, which may not be desired for production stability.
 - **ZIP**: Upload your prepared ZIP file using the Dashboard’s editor or deployment UI.
-
-> Attention: When using Cloudflare's Git integration, go to **Settings -> Build > Branch Control** in your Worker project. Make sure to **deactivate** (uncheck) the option for enabling builds for non-production branches. If this setting is active, any push to your `develop` (or other non-production) branch will trigger a deployment to your Worker, which may not be desired for production stability.
 
 ### 4. Update DNS
 - Navigate to **Settings -> Routes** and add a domain or route for the Worker.
 - Point DNS records for your subdomains to the Worker you configured.
 
 ## Environment Variables
-> Important: When deploying this Worker via GitHub/GitLab integration, any variables set in the Cloudflare Dashboard as plain text or JSON will be **overwritten** during deployment. To avoid losing configuration, always declare variables as *secrets* in the Cloudflare Dashboard when using GitHub/GitLab as your deployment method.
+> **Important:** When deploying this Worker via GitHub/GitLab integration, any variables set in the Cloudflare Dashboard as plain text or JSON will be **overwritten** during deployment unless you use the `--keep-vars` flag. To avoid losing configuration, always declare variables as *secrets* in the Cloudflare Dashboard when using GitHub/GitLab as your deployment method or set your deployment command to `npx wrangler deploy --keep-vars` in the Cloudflare Dashboard (Settings -> Build -> Deploy command) to ensure that environment variables set in the Dashboard are preserved during deployment.
 
 ### Variable Descriptions
 - `ALLOWED_HOST_SUFFIXES`
