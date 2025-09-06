@@ -17,11 +17,15 @@ Cloudflare always requires a code source (repository or ZIP) to deploy a Worker.
 - **Git (recommended)**: Fork this repository into your own GitHub/GitLab account
 - **ZIP (manual upload)**: Download the code as a ZIP file and prepare it for upload
 
-### 2. Add environment variables
+### 2. Add a Worker in Cloudflare
+- Log in to the [Cloudflare Dashboard](https://dash.cloudflare.com/)
+- Navigate to **Workers & Pages -> Workers** and create a new Worker with the name `cloudflare-redirect-worker`
+
+### 3. Add Environment Variables
 > **Note**: See the [Environment Variables](#environment-variables) section below for variable descriptions and an example configuration.
 
 There are multiple ways to provide environment variables for your Worker:
-- Set them directly in the Cloudflare Dashboard (Worker -> Settings -> Variables & Secrets). This keeps sensitive values out of your source code and version control.
+- Set them directly in the Cloudflare Dashboard (**Worker -> Settings -> Variables & Secrets**). This keeps sensitive values out of your source code and version control.
 - You can define them in your `wrangler.toml` file (not recommended for secrets or sensitive data if your repository is public).
 - You can deliver them through your CI/CD pipeline or other deployment automation.
 
@@ -30,12 +34,12 @@ There are multiple ways to provide environment variables for your Worker:
 > - Add `--keep-vars` to your deployment command in Settings → Build → Deploy command (e.g., `npx wrangler deploy --keep-vars`), **or**
 > - set your variables as *secrets* in the Dashboard, which are always preserved.
 
-### 3. Deploy via the Dashboard
+### 4. Deploy via the Cloudflare Dashboard
 - **Git**: Connect your forked repository directly to your GitHub/GitLab account in the Cloudflare Dashboard. Cloudflare will build and deploy automatically.
     - **Important:** When using Cloudflare Git integration, go to **Settings -> Build > Branch Control** in your Worker project. Make sure to **deactivate** (uncheck) the option for enabling builds for non-production branches. If this setting is active, any push to your `develop` (or other non-production) branch will trigger a deployment to your Worker, which may not be desired for production stability.
 - **ZIP**: Upload your prepared ZIP file using the Dashboard’s editor or deployment UI.
 
-### 4. Update DNS
+### 5. Update DNS
 - Navigate to **Settings -> Routes** and add a domain or route for the Worker.
 - Point DNS records for your subdomains to the Worker you configured.
 
