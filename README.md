@@ -1,13 +1,13 @@
 # cloudflare-redirect-worker
 A Cloudflare Worker for secure, configurable HTTP redirects by subdomain.  It routes requests for specific subdomains (for example `foo.example.com`) to target URLs (for example `secure.com`).  It also provides optional Basic Auth with support for both single and multiple user/password pairs, rate limiting and security headers.
 
-[![Release](https://img.shields.io/github/v/release/jasonhaak/cloudflare-redirect-worker?style=flat-square)](https://github.com/jasonhaak/cloudflare-redirect-worker/releases/latest)
-[![CI](https://img.shields.io/github/actions/workflow/status/jasonhaak/cloudflare-redirect-worker/ci.yml?branch=main&style=flat-square&logo=github)](https://github.com/jasonhaak/cloudflare-redirect-worker/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/jasonhaak/cloudflare-redirect-worker)](https://github.com/jasonhaak/cloudflare-redirect-worker/releases/latest)
+[![CI](https://img.shields.io/github/actions/workflow/status/jasonhaak/cloudflare-redirect-worker/ci.yml?branch=main&logo=github)](https://github.com/jasonhaak/cloudflare-redirect-worker/actions/workflows/ci.yml)
 [![Coverage](https://codecov.io/github/jasonhaak/cloudflare-redirect-worker/graph/badge.svg?token=OJ2SFEQQAW)](https://codecov.io/github/jasonhaak/cloudflare-redirect-worker)
-[![License](https://img.shields.io/github/license/jasonhaak/cloudflare-redirect-worker?style=flat-square)](https://github.com/jasonhaak/cloudflare-redirect-worker/blob/main/LICENSE)
-[![Last Commit](https://img.shields.io/github/last-commit/jasonhaak/cloudflare-redirect-worker?style=flat-square)](https://github.com/jasonhaak/cloudflare-redirect-worker/commits/main)
-[![Issues](https://img.shields.io/github/issues/jasonhaak/cloudflare-redirect-worker?style=flat-square)](https://github.com/jasonhaak/cloudflare-redirect-worker/issues)
-[![Pull Requests](https://img.shields.io/github/issues-pr/jasonhaak/cloudflare-redirect-worker?style=flat-square)](https://github.com/jasonhaak/cloudflare-redirect-worker/pulls)
+[![License](https://img.shields.io/github/license/jasonhaak/cloudflare-redirect-worker)](https://github.com/jasonhaak/cloudflare-redirect-worker/blob/main/LICENSE)
+[![Last Commit](https://img.shields.io/github/last-commit/jasonhaak/cloudflare-redirect-worker)](https://github.com/jasonhaak/cloudflare-redirect-worker/commits/main)
+[![Issues](https://img.shields.io/github/issues/jasonhaak/cloudflare-redirect-worker)](https://github.com/jasonhaak/cloudflare-redirect-worker/issues)
+[![Pull Requests](https://img.shields.io/github/issues-pr/jasonhaak/cloudflare-redirect-worker)](https://github.com/jasonhaak/cloudflare-redirect-worker/pulls)
 
 
 ## Features
