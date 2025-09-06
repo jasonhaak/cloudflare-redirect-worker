@@ -212,13 +212,10 @@ describe('Worker', () => {
     const testEnv = {
       ...mockEnv,
       PROTECTED_SUBDOMAINS: 'admin,secure,missing',
-      // No LINK_MISSING defined
+      // No LINK_MISSING defined - this should cause a 404
     };
 
-    const request = createRequest({
-      hostname: 'missing.example.com',
-    });
-
+    const request = createRequest({ hostname: 'missing.example.com' });
     const response = await worker.fetch(request, testEnv);
 
     expect(response.status).toBe(404);
@@ -230,16 +227,109 @@ describe('Worker', () => {
       ...mockEnv,
       USER_SECURE: '',  // Empty username
       PASS_SECURE: '',  // Empty password
-      FALLBACK_USER: '', // Empty fallback
-      FALLBACK_PASS: ''  // Empty fallback
+      PROTECTED_SUBDOMAINS: 'admin,secure'
     };
 
-    const request = createRequest({
-      hostname: 'secure.example.com',
-    });
-
+    const request = createRequest({ hostname: 'secure.example.com' });
     const response = await worker.fetch(request, testEnv);
 
     expect(response.status).toBe(401);
+  });
+
+  describe('Multi-level subdomains', () => {
+    it('forms correct environment keys for multi-level subdomains (dots to underscores)', async () => {
+      // Test environment with multi-level subdomain config
+      // foo.bar subdomain should map to LINK_FOO_BAR, USER_FOO_BAR, PASS_FOO_BAR
+      const testEnv = {
+        ...mockEnv,
+        LINK_FOO_BAR: 'https://foo-bar-target.example.com',
+        USER_FOO_BAR: 'foobaruser',
+        PASS_FOO_BAR: 'foobarpass',
+        PROTECTED_SUBDOMAINS: 'admin,secure,foo.bar'
+      };
+
+      const request = createRequest({ hostname: 'foo.bar.example.com' });
+      const response = await worker.fetch(request, testEnv);
+
+      expect(response.status).toBe(401); // Should require auth since it's protected
+      expect(response.headers.get('WWW-Authenticate')).toContain('Basic');
+    });
+
+    it('redirects multi-level subdomain after successful authentication', async () => {
+      const testEnv = {
+        ...mockEnv,
+        LINK_FOO_BAR: 'https://foo-bar-target.example.com',
+        USER_FOO_BAR: 'foobaruser',
+        PASS_FOO_BAR: 'foobarpass',
+        PROTECTED_SUBDOMAINS: 'admin,secure,foo.bar'
+      };
+
+      // Base64 encode 'foobaruser:foobarpass'
+      const credentials = btoa('foobaruser:foobarpass');
+
+      const request = createRequest({
+        hostname: 'foo.bar.example.com',
+        headers: {
+          'Authorization': `Basic ${credentials}`
+        }
+      });
+
+      const response = await worker.fetch(request, testEnv);
+
+      expect(response.status).toBe(302);
+      expect(response.headers.get('Location')).toBe('https://foo-bar-target.example.com/');
+    });
+
+    it('handles unprotected multi-level subdomains', async () => {
+      const testEnv = {
+        ...mockEnv,
+        LINK_API_V1: 'https://api-v1-target.example.com'
+        // api.v1 is not in PROTECTED_SUBDOMAINS, so no auth required
+      };
+
+      const request = createRequest({ hostname: 'api.v1.example.com' });
+      const response = await worker.fetch(request, testEnv);
+
+      expect(response.status).toBe(302);
+      expect(response.headers.get('Location')).toBe('https://api-v1-target.example.com/');
+    });
+
+    it('uses fallback credentials for multi-level subdomains when specific ones not provided', async () => {
+      const testEnv = {
+        ...mockEnv,
+        LINK_TEST_SUB: 'https://test-sub-target.example.com',
+        // No USER_TEST_SUB or PASS_TEST_SUB defined - should use fallback
+        PROTECTED_SUBDOMAINS: 'admin,secure,test.sub'
+      };
+
+      // Base64 encode 'fallbackuser:fallbackpass'
+      const credentials = btoa('fallbackuser:fallbackpass');
+
+      const request = createRequest({
+        hostname: 'test.sub.example.com',
+        headers: {
+          'Authorization': `Basic ${credentials}`
+        }
+      });
+
+      const response = await worker.fetch(request, testEnv);
+
+      expect(response.status).toBe(302);
+      expect(response.headers.get('Location')).toBe('https://test-sub-target.example.com/');
+    });
+
+    it('handles deeply nested multi-level subdomains', async () => {
+      const testEnv = {
+        ...mockEnv,
+        LINK_DOCS_HELP: 'https://docs-help-target.example.com'
+        // docs.help should map to LINK_DOCS_HELP
+      };
+
+      const request = createRequest({ hostname: 'docs.help.example.com' });
+      const response = await worker.fetch(request, testEnv);
+
+      expect(response.status).toBe(302);
+      expect(response.headers.get('Location')).toBe('https://docs-help-target.example.com/');
+    });
   });
 });

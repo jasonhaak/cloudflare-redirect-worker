@@ -7,15 +7,20 @@ import { checkBasicAuth, isNonEmpty } from "./auth.js";
 // Helper to get redirect target from env by subdomain
 function getRedirectTarget(subdomain, env) {
   // Convention: LINK_<SUBDOMAIN> (uppercase)
-  const key = `LINK_${subdomain.toUpperCase()}`;
+  // For multi-level subdomains, dots are replaced with underscores
+  // Example: foo.bar -> LINK_FOO_BAR
+  const key = `LINK_${subdomain.toUpperCase().replace(/\./g, '_')}`;
   return env[key];
 }
 
 // Helper to get credentials from env by subdomain
 function getCredentials(subdomain, env) {
   // Convention: USER_<SUBDOMAIN>, PASS_<SUBDOMAIN> (uppercase)
-  const userKey = `USER_${subdomain.toUpperCase()}`;
-  const passKey = `PASS_${subdomain.toUpperCase()}`;
+  // For multi-level subdomains, dots are replaced with underscores
+  // Example: foo.bar -> USER_FOO_BAR, PASS_FOO_BAR
+  const normalizedSubdomain = subdomain.toUpperCase().replace(/\./g, '_');
+  const userKey = `USER_${normalizedSubdomain}`;
+  const passKey = `PASS_${normalizedSubdomain}`;
   return {
     user: env[userKey] || env.FALLBACK_USER,
     pass: env[passKey] || env.FALLBACK_PASS,

@@ -42,16 +42,20 @@ _**Git**: Connect your forked repository directly to your GitHub/GitLab account 
 - `LINK_<SUBDOMAIN>`
     - Redirect target URL for each subdomain.
     - Example: `LINK_FOO` for `foo.example.com`
+    - **Multi-level subdomains**: Dots are replaced with underscores
+    - Example: `api.v1.example.com` → `LINK_API_V1`
 - `USER_<SUBDOMAIN>`, `PASS_<SUBDOMAIN>`
     - Credentials for each protected subdomain.
     - Example: `USER_FOO`, `PASS_FOO` for `foo.example.com`
+    - **Multi-level subdomains**: Dots are replaced with underscores
+    - Example: `api.v1.example.com` → `USER_API_V1`, `PASS_API_V1`
 - `FALLBACK_USER`, `FALLBACK_PASS`
     - Optional fallback credentials if specific subdomain credentials are not set
 
 ### Example
 ```toml
 ALLOWED_HOST_SUFFIXES = ".example.com,.example.org"
-PROTECTED_SUBDOMAINS = "foo,secure"
+PROTECTED_SUBDOMAINS = "foo,secure,api.v1"
 
 LINK_PUBLIC = "https://www.public.com/"
 
@@ -62,6 +66,10 @@ PASS_FOO = "foo_password"
 LINK_SECURE = "https://secure.com/"
 USER_SECURE = "secure_user"
 PASS_SECURE = "secure_password"
+
+LINK_API_V1 = "https://api-v1.company.com/"
+USER_API_V1 = "api_user"
+PASS_API_V1 = "api_password"
 
 FALLBACK_USER = "fallback_user"
 FALLBACK_PASS = "fallback_password"
