@@ -1,5 +1,5 @@
 import { securityHeaders, authChallengeHeaders } from "./security-headers.js";
-import { parseCommaList, hostIsAllowed, extractSubdomain } from "./host.js";
+import { parseCommaList, parseSimpleCommaList, hostIsAllowed, extractSubdomain } from "./host.js";
 import { getClientIdFromCloudflare, respond, setHeaders } from "./utils.js";
 import { isRateLimited, registerFailedAttempt, clearFailures, rateLimitRetryHeaders, MAX_AUTH_HEADER_LENGTH } from "./ratelimit.js";
 import { checkBasicAuth, isNonEmpty } from "./auth.js";
@@ -59,7 +59,7 @@ export default {
     const targetUrl = getRedirectTarget(subdomain, env);
 
     // Get protected subdomains from env
-    const protectedSubdomains = new Set(parseCommaList(env.PROTECTED_SUBDOMAINS));
+    const protectedSubdomains = new Set(parseSimpleCommaList(env.PROTECTED_SUBDOMAINS));
     const isProtected = protectedSubdomains.has(subdomain);
 
     // If subdomain is protected but has no target, pretend it does not exist
