@@ -29,7 +29,7 @@ export function setHeaders(response, headers) {
   return new Response(response.body, { status: response.status, headers: merged });
 }
 
-// Creates a new response with the given body, status, and headers
+// Creates a new response with the given body, status and headers
 export function respond(body, status, headers) {
   return new Response(body, { status, headers });
 }

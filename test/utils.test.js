@@ -16,7 +16,7 @@ describe('utils.js', () => {
   });
 
   describe('respond', () => {
-    it('returns a Response with correct body, status, and headers', async () => {
+    it('returns a response with correct body, status and headers', async () => {
       const res = respond('hello', 201, { foo: 'bar' });
       expect(res).toBeInstanceOf(Response);
       expect(res.status).toBe(201);
@@ -31,7 +31,7 @@ describe('utils.js', () => {
   });
 
   describe('setHeaders', () => {
-    it('adds new headers to a Response', async () => {
+    it('adds new headers to a response', async () => {
       const res = respond('body', 200, { a: '1' });
       const res2 = setHeaders(res, { b: '2' });
       expect(res2.headers.get('a')).toBe('1');

@@ -43,7 +43,7 @@ describe('security-headers.js', () => {
     expect(await modifiedResponse.text()).toBe('body');
   });
 
-  it('respond creates a new response with appropriate status, body, and headers', async () => {
+  it('respond creates a new response with appropriate status, body and headers', async () => {
     const response = respond('test body', 418, securityHeaders());
     expect(response.status).toBe(418);
     expect(await response.text()).toBe('test body');
