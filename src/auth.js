@@ -1,3 +1,5 @@
+import { base64Decode } from './base64.js';
+
 export function isNonEmpty(value) {
   return typeof value === "string" && value.trim().length > 0;
 }
@@ -9,7 +11,7 @@ export function checkBasicAuth(authorizationHeader, expectedUser, expectedPass) 
   // Extract and decode credentials from header
   const b64 = authorizationHeader.slice(6).trim();
   let decoded;
-  try { decoded = atob(b64); } catch { return false; }
+  try { decoded = base64Decode(b64); } catch { return false; }
 
   // Credentials must be in "user:pass" format
   const idx = decoded.indexOf(":");

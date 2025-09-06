@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import worker from '../src/index.js';
 import * as ratelimit from '../src/ratelimit.js';
+import { base64Encode } from '../src/base64.js';
 
 // Mock environment variables
 const mockEnv = {
@@ -104,7 +105,7 @@ describe('Worker', () => {
 
   it('redirects after successful authentication', async () => {
     // Base64 encode 'adminuser:adminpass'
-    const credentials = btoa('adminuser:adminpass');
+    const credentials = base64Encode('adminuser:adminpass');
 
     const request = createRequest({
       hostname: 'admin.example.com',
@@ -121,7 +122,7 @@ describe('Worker', () => {
 
   it('returns 401 for incorrect credentials', async () => {
     // Base64 encode 'adminuser:wrongpass'
-    const credentials = btoa('adminuser:wrongpass');
+    const credentials = base64Encode('adminuser:wrongpass');
 
     const request = createRequest({
       hostname: 'admin.example.com',
@@ -139,7 +140,7 @@ describe('Worker', () => {
     const clientIp = '1.2.3.4';
 
     // Base64 encode 'adminuser:wrongpass'
-    const credentials = btoa('adminuser:wrongpass');
+    const credentials = base64Encode('adminuser:wrongpass');
 
     // Make multiple failed requests
     for (let i = 0; i < ratelimit.MAX_FAILED_ATTEMPTS; i++) {
@@ -180,7 +181,7 @@ describe('Worker', () => {
     };
 
     // Base64 encode 'fallbackuser:fallbackpass'
-    const credentials = btoa('fallbackuser:fallbackpass');
+    const credentials = base64Encode('fallbackuser:fallbackpass');
 
     const request = createRequest({
       hostname: 'test.example.com',
@@ -265,7 +266,7 @@ describe('Worker', () => {
       };
 
       // Base64 encode 'foobaruser:foobarpass'
-      const credentials = btoa('foobaruser:foobarpass');
+      const credentials = base64Encode('foobaruser:foobarpass');
 
       const request = createRequest({
         hostname: 'foo.bar.example.com',
@@ -303,7 +304,7 @@ describe('Worker', () => {
       };
 
       // Base64 encode 'fallbackuser:fallbackpass'
-      const credentials = btoa('fallbackuser:fallbackpass');
+      const credentials = base64Encode('fallbackuser:fallbackpass');
 
       const request = createRequest({
         hostname: 'test.sub.example.com',

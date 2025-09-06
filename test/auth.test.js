@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { checkBasicAuth, constantTimeEqual, isNonEmpty } from '../src/auth.js';
+import { base64Encode } from '../src/base64.js';
 
 describe('auth.js', () => {
   describe('isNonEmpty', () => {
@@ -29,7 +30,7 @@ describe('auth.js', () => {
 
   describe('checkBasicAuth', () => {
     function makeHeader(user, pass) {
-      return 'Basic ' + Buffer.from(`${user}:${pass}`).toString('base64');
+      return 'Basic ' + base64Encode(`${user}:${pass}`);
     }
     it('returns true for correct credentials', () => {
       const header = makeHeader('user', 'pass');
@@ -44,7 +45,7 @@ describe('auth.js', () => {
       expect(checkBasicAuth('Bearer token', 'user', 'pass')).toBe(false);
     });
     it('returns false for missing colon', () => {
-      const b64 = Buffer.from('userpass').toString('base64');
+      const b64 = base64Encode('userpass');
       expect(checkBasicAuth('Basic ' + b64, 'user', 'pass')).toBe(false);
     });
     it('returns false for undefined or empty authorization header', () => {
