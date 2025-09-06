@@ -84,7 +84,9 @@ FALLBACK_PASS = "fallback_password"
 2. It extracts the subdomain and resolves its redirect target from `LINK_<SUBDOMAIN>`.
 3. If the subdomain is listed in `PROTECTED_SUBDOMAINS`, the worker enforces Basic Auth using configured credentials.
 4. Failed auth attempts are rate-limited per client.
+5. Valid requests are redirected with proper security headers.
 
+## Installation & Development
 1. **Clone the Repository**
     ```bash
     git clone https://github.com/jasonhaak/cloudflare-redirect-worker.git
