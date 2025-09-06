@@ -4,27 +4,32 @@ A Cloudflare Worker for secure, configurable HTTP redirects by subdomain. It rou
 ## Features
 - **HTTPS Enforcement**: Redirects HTTP requests to HTTPS
 - **Subdomain-Based Redirects**: Map a subdomain (e.g. `foo.example.com`) to a redirect target URL configured via environment variables (`LINK_FOO`)
+- **Multi-level Subdomains**: Supports subdomains with multiple levels (e.g. `api.v1.example.com`), mapping them to environment variables by replacing dots with underscores (`LINK_API_V1`)
 - **Protected Subdomains**: Require HTTP Basic Auth for configurable subdomains
 - **In-Memory Rate Limiting**: Simple per-client + per-subdomain throttling of failed authentication attempts to mitigate brute-force attacks
 - **Security Headers**: Responses include common security headers to reduce risk of common web attacks
-- **Allowed Host Suffixes**: Only requests for configured host suffixes are processed; others return 404
 
 ## Quick Start
 You will learn how to deploy the worker to Cloudflare, configure secrets and point DNS records for your subdomains to the worker route. Additionally, you will configure environment variables as secrets for routing and authentication.
-
-This is the recommended method for non-technical users.
 
 ### 1. Prepare the Codebase
 Cloudflare always requires a code source (repository or ZIP) to deploy a Worker. Choose one of the following:
 - **Git (recommended)**: Fork this repository into your own GitHub/GitLab account
 - **ZIP (manual upload)**: Download the code as a ZIP file and prepare it for upload
 
-### 2. In the Cloudflare Dashboard
-1. Navigate to your Worker -> **Settings -> Variables & Secrets**.
-2. Add **all environment variables** as *secrets* (see below for descriptions and examples).
+### 2. Add environment variables
+> **Note**: See the [Environment Variables](#environment-variables) section below for variable descriptions and an example configuration.
+
+There are multiple ways to provide environment variables for your Worker:
+- Set them directly in the Cloudflare Dashboard (Worker -> Settings -> Variables & Secrets). This keeps sensitive values out of your source code and version control.
+- You can define them in your `wrangler.toml` file (not recommended for secrets or sensitive data if your repository is public).
+- You can deliver them through your CI/CD pipeline or other deployment automation.
+
+> **Important:** When deploying this Worker via GitHub/GitLab integration, any variables set in the Cloudflare Dashboard as plain text or JSON will be **overwritten** during deployment unless you use the `--keep-vars` flag. To avoid losing configuration, set your deployment command to `npx wrangler deploy --keep-vars` in the Cloudflare Dashboard (Settings -> Build -> Deploy command) to ensure that environment variables set in the Dashboard are preserved during deployment. Alternatively, declare variables as *secrets* in the Cloudflare Dashboard when using GitHub/GitLab as your deployment method.
 
 ### 3. Deploy via the Dashboard
 - **Git**: Connect your forked repository directly to your GitHub/GitLab account in the Cloudflare Dashboard. Cloudflare will build and deploy automatically.
+    - **Important:** When using Cloudflare Git integration, go to **Settings -> Build > Branch Control** in your Worker project. Make sure to **deactivate** (uncheck) the option for enabling builds for non-production branches. If this setting is active, any push to your `develop` (or other non-production) branch will trigger a deployment to your Worker, which may not be desired for production stability.
 - **ZIP**: Upload your prepared ZIP file using the Dashboard’s editor or deployment UI.
 
 ### 4. Update DNS
@@ -32,8 +37,6 @@ Cloudflare always requires a code source (repository or ZIP) to deploy a Worker.
 - Point DNS records for your subdomains to the Worker you configured.
 
 ## Environment Variables
-> Important: When deploying this Worker via GitHub/GitLab integration, any variables set in the Cloudflare Dashboard as plain text or JSON will be **overwritten** during deployment. To avoid losing configuration, always declare variables as *secrets* in the Cloudflare Dashboard when using GitHub/GitLab as your deployment method.
-
 ### Variable Descriptions
 - `ALLOWED_HOST_SUFFIXES`
     - Comma-separated list of allowed host suffixes
@@ -43,12 +46,12 @@ Cloudflare always requires a code source (repository or ZIP) to deploy a Worker.
 - `LINK_<SUBDOMAIN>`
     - Redirect target URL for each subdomain
     - Example: `LINK_FOO` for `foo.example.com`
-    - **Multi-level subdomains**: Dots are replaced with underscores
+    - Multi-level subdomains: Dots are replaced with underscores
     - Example: `api.v1.example.com` → `LINK_API_V1`
 - `USER_<SUBDOMAIN>`, `PASS_<SUBDOMAIN>`
     - Credentials for each protected subdomain
     - Example: `USER_FOO`, `PASS_FOO` for `foo.example.com`
-    - **Multi-level subdomains**: Dots are replaced with underscores
+    - Multi-level subdomains: Dots are replaced with underscores
     - Example: `api.v1.example.com` → `USER_API_V1`, `PASS_API_V1`
 - `FALLBACK_USER`, `FALLBACK_PASS`
     - Optional fallback credentials if specific subdomain credentials are not set
@@ -84,8 +87,6 @@ FALLBACK_PASS = "fallback_password"
 5. Valid requests are redirected with proper security headers.
 
 ## Installation & Development
-For developers looking to customize or extend the worker, follow these steps.
-
 1. **Clone the Repository**
     ```bash
     git clone https://github.com/jasonhaak/cloudflare-redirect-worker.git
@@ -113,5 +114,3 @@ The test suite covers authentication, host parsing, rate limiting, security head
 
 ## Author & Licence
 This code was written by Jason Haak and is licensed under the MIT licence.
-
-
