@@ -21,15 +21,3 @@ export function authChallengeHeaders() {
     "WWW-Authenticate": 'Basic realm="Secure Redirect", charset="UTF-8"',
   });
 }
-
-// Merge new headers with response
-export function setHeaders(response, headers) {
-  const merged = new Headers(response.headers);
-  for (const [k, v] of Object.entries(headers)) merged.set(k, v);
-  return new Response(response.body, { status: response.status, headers: merged });
-}
-
-// Creates a new response with the given body, status and headers
-export function respond(body, status, headers) {
-  return new Response(body, { status, headers });
-}

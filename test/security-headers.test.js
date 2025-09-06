@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { securityHeaders, authChallengeHeaders, setHeaders, respond } from '../src/security-headers.js';
+import { securityHeaders, authChallengeHeaders } from '../src/security-headers.js';
+import { respond, setHeaders } from '../src/utils.js';
 
 describe('security-headers.js', () => {
   it('returns all required security headers', () => {
