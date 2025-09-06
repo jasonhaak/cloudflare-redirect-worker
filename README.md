@@ -1,11 +1,11 @@
 # cloudflare-redirect-worker
-A Cloudflare Worker for secure, configurable HTTP redirects by subdomain. It routes requests for specific subdomains (for example `foo.example.com`) to target URLs (for example `secure.com`) while providing optional Basic Auth, rate limiting and security headers.
+A Cloudflare Worker for secure, configurable HTTP redirects by subdomain.  It routes requests for specific subdomains (for example `foo.example.com`) to target URLs (for example `secure.com`).  It also provides optional Basic Auth with support for both single and multiple user/password pairs, rate limiting and security headers.
 
 ## Features
 - **HTTPS Enforcement**: Redirects HTTP requests to HTTPS
 - **Subdomain-Based Redirects**: Map a subdomain (e.g. `foo.example.com`) to a redirect target URL configured via environment variables (`LINK_FOO`)
 - **Multi-level Subdomains**: Supports subdomains with multiple levels (e.g. `api.v1.example.com`), mapping them to environment variables by replacing dots with underscores (`LINK_API_V1`)
-- **Protected Subdomains**: Require HTTP Basic Auth for configurable subdomains
+- **Protected Subdomains with Basic Auth**: Require HTTP Basic Auth for configurable subdomains. Supports both a single user/password or multiple user/password pairs per subdomain.
 - **In-Memory Rate Limiting**: Simple per-client + per-subdomain throttling of failed authentication attempts to mitigate brute-force attacks
 - **Security Headers**: Responses include common security headers to reduce risk of common web attacks
 
@@ -48,11 +48,20 @@ There are multiple ways to provide environment variables for your Worker:
     - Example: `LINK_FOO` for `foo.example.com`
     - Multi-level subdomains: Dots are replaced with underscores
     - Example: `api.v1.example.com` → `LINK_API_V1`
-- `USER_<SUBDOMAIN>`, `PASS_<SUBDOMAIN>`
-    - Credentials for each protected subdomain
-    - Example: `USER_FOO`, `PASS_FOO` for `foo.example.com`
-    - Multi-level subdomains: Dots are replaced with underscores
-    - Example: `api.v1.example.com` → `USER_API_V1`, `PASS_API_V1`
+- **Basic Auth User/Password Support:**
+    - You can protect a subdomain with either a single user/password or multiple user/password pairs:
+    - **Single user/password:**
+        - `USER_<SUBDOMAIN>`, `PASS_<SUBDOMAIN>`
+        - Example: `USER_FOO`, `PASS_FOO` for `foo.example.com`
+        - Multi-level subdomains: Dots are replaced with underscores
+        - Example: `api.v1.example.com` → `USER_API_V1`, `PASS_API_V1`
+    - **Multiple user/password pairs:**
+        - `USERS_<SUBDOMAIN>`
+        - JSON array of user/pass objects for a subdomain
+        - Example: `USERS_FOO = '[{"user":"alice","pass":"pw1"},{"user":"bob","pass":"pw2"}]'`
+        - Multi-level subdomains: Dots are replaced with underscores
+        - Example: `api.v1.example.com` → `USERS_API_V1`
+        - If present, this takes precedence over `USER_<SUBDOMAIN>`/`PASS_<SUBDOMAIN>`
 - `FALLBACK_USER`, `FALLBACK_PASS`
     - Optional fallback credentials if specific subdomain credentials are not set
 
@@ -64,16 +73,18 @@ PROTECTED_SUBDOMAINS = "foo,secure,api.v1"
 LINK_PUBLIC = "https://www.public.com/"
 
 LINK_FOO = "https://foo-website.com/"
+# Single user/password for foo.example.com
 USER_FOO = "foo_user"
 PASS_FOO = "foo_password"
+# Or, multiple users for foo.example.com (overrides USER_FOO/PASS_FOO if set)
+USERS_FOO = '[{"user":"alice","pass":"pw1"},{"user":"bob","pass":"pw2"}]'
 
 LINK_SECURE = "https://secure.com/"
 USER_SECURE = "secure_user"
 PASS_SECURE = "secure_password"
 
 LINK_API_V1 = "https://api-v1.company.com/"
-USER_API_V1 = "api_user"
-PASS_API_V1 = "api_password"
+USERS_API_V1 = '[{"user":"apiuser","pass":"apipw"}]'
 
 FALLBACK_USER = "fallback_user"
 FALLBACK_PASS = "fallback_password"
@@ -82,7 +93,7 @@ FALLBACK_PASS = "fallback_password"
 ## How it Works
 1. The worker checks the request hostname against `ALLOWED_HOST_SUFFIXES`.
 2. It extracts the subdomain and resolves its redirect target from `LINK_<SUBDOMAIN>`.
-3. If the subdomain is listed in `PROTECTED_SUBDOMAINS`, the worker enforces Basic Auth using configured credentials.
+3. If the subdomain is listed in `PROTECTED_SUBDOMAINS`, the worker enforces Basic Auth using configured credentials. You can use either a single user/password or a list of user/password pairs for each subdomain.
 4. Failed auth attempts are rate-limited per client.
 5. Valid requests are redirected with proper security headers.
 
@@ -110,7 +121,7 @@ This project uses **Vitest** for unit tests. Run the suite locally:
 npm test
 ```
 
-The test suite covers authentication, host parsing, rate limiting, security headers and utility functions.
+The test suite covers authentication, including both single-user and multi-user Basic Auth, host parsing, rate limiting, security headers and utility functions.
 
 ## Author & Licence
 This code was written by Jason Haak and is licensed under the MIT licence.

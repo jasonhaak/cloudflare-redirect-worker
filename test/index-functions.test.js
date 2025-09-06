@@ -7,6 +7,7 @@ import {
   handleRedirect
 } from '../src/index.js';
 import { base64Encode } from '../src/base64.js';
+import {Buffer} from "buffer";
 
 // Mock dependencies
 vi.mock('../src/utils.js', () => ({
@@ -38,11 +39,26 @@ vi.mock('../src/host.js', () => ({
 }));
 
 vi.mock('../src/auth.js', () => ({
-  checkBasicAuth: vi.fn((authHeader, expectedUser, expectedPass) => {
-    if (!authHeader.startsWith('Basic ')) return false;
+  checkBasicAuth: vi.fn((authHeader, expectedOrUser, maybePass) => {
+    if (!authHeader || !authHeader.startsWith('Basic ')) return false;
     const credentials = authHeader.slice(6);
-    const expected = base64Encode(`${expectedUser}:${expectedPass}`);
-    return credentials === expected;
+    // Legacy signature: (header, user, pass)
+    if (typeof expectedOrUser === 'string' && typeof maybePass === 'string') {
+      const expected = base64Encode(`${expectedOrUser}:${maybePass}`);
+      return credentials === expected;
+    }
+    // New signature: (header, expected)
+    const decoded = Buffer.from(credentials, 'base64').toString('utf8');
+    const idx = decoded.indexOf(':');
+    if (idx === -1) return false;
+    const providedUser = decoded.slice(0, idx);
+    const providedPass = decoded.slice(idx + 1);
+    if (Array.isArray(expectedOrUser)) {
+      return expectedOrUser.some(({ user, pass }) => providedUser === user && providedPass === pass);
+    } else if (expectedOrUser && typeof expectedOrUser === 'object') {
+      return providedUser === expectedOrUser.user && providedPass === expectedOrUser.pass;
+    }
+    return false;
   }),
   isNonEmpty: vi.fn((value) => value && value.trim().length > 0)
 }));

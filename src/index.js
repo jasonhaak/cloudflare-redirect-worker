@@ -53,12 +53,27 @@ function getRedirectTarget(subdomain, env) {
 
 // Helper to get credentials from env by subdomain
 function getCredentials(subdomain, env) {
-  // Convention: USER_<SUBDOMAIN>, PASS_<SUBDOMAIN> (uppercase)
+  // Multi-user convention: USERS_<SUBDOMAIN> (uppercase)
+  // Single-user convention: USER_<SUBDOMAIN>, PASS_<SUBDOMAIN> (uppercase)
   // For multi-level subdomains, dots are replaced with underscores
-  // Example: foo.bar -> USER_FOO_BAR, PASS_FOO_BAR
+  // Example: foo.bar -> USERS_FOO_BAR OR USER_FOO_BAR, PASS_FOO_BAR
   const normalizedSubdomain = subdomain.toUpperCase().replace(/\./g, '_');
+  const usersKey = `USERS_${normalizedSubdomain}`;
   const userKey = `USER_${normalizedSubdomain}`;
   const passKey = `PASS_${normalizedSubdomain}`;
+
+  // Try JSON array first
+  if (env[usersKey]) {
+    try {
+      const arr = JSON.parse(env[usersKey]);
+      if (Array.isArray(arr) && arr.every(obj => obj && typeof obj.user === "string" && typeof obj.pass === "string")) {
+        return arr;
+      }
+    } catch {
+    }
+  }
+
+  // Fallback to single user/pass or global fallback
   return {
     user: env[userKey] || env.FALLBACK_USER,
     pass: env[passKey] || env.FALLBACK_PASS,
@@ -95,9 +110,15 @@ export function resolveSubdomain(hostname, allowedHostSuffixes) {
 
 // Handle authorization for protected subdomains
 export async function authorizeProtectedSubdomain(request, subdomain, env) {
-  const { user: expectedUser, pass: expectedPass } = getCredentials(subdomain, env);
+  const expected = getCredentials(subdomain, env);
 
-  if (!isNonEmpty(expectedUser) || !isNonEmpty(expectedPass)) {
+  let hasValid;
+  if (Array.isArray(expected)) {
+    hasValid = expected.length > 0 && expected.every(({ user, pass }) => isNonEmpty(user) && isNonEmpty(pass));
+  } else {
+    hasValid = isNonEmpty(expected.user) && isNonEmpty(expected.pass);
+  }
+  if (!hasValid) {
     return respond("Not authorized", 401, authChallengeHeaders());
   }
 
@@ -113,7 +134,7 @@ export async function authorizeProtectedSubdomain(request, subdomain, env) {
     return respond("Not authorized", 401, authChallengeHeaders());
   }
 
-  const isValid = checkBasicAuth(authHeader, expectedUser, expectedPass);
+  const isValid = checkBasicAuth(authHeader, expected);
   if (!isValid) {
     registerFailedAttempt(clientId, subdomain);
     return respond("Not authorized", 401, authChallengeHeaders());
