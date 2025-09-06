@@ -4,8 +4,8 @@ export function isNonEmpty(value) {
   return typeof value === "string" && value.trim().length > 0;
 }
 
-// Checks Basic Auth header against expected credentials
-export function checkBasicAuth(authorizationHeader, expectedUser, expectedPass) {
+// Checks Basic Auth header against expected credentials (single or array)
+export function checkBasicAuth(authorizationHeader, expectedOrUser, maybePass) {
   if (!authorizationHeader || !authorizationHeader.startsWith("Basic ")) return false;
 
   // Extract and decode credentials from header
@@ -18,8 +18,26 @@ export function checkBasicAuth(authorizationHeader, expectedUser, expectedPass) 
   if (idx === -1) return false;
   const providedUser = decoded.slice(0, idx);
   const providedPass = decoded.slice(idx + 1);
-  return constantTimeEqual(providedUser, expectedUser) &&
-         constantTimeEqual(providedPass, expectedPass);
+
+  // Support legacy signature: (header, user, pass)
+  if (typeof expectedOrUser === "string" && typeof maybePass === "string") {
+    return constantTimeEqual(providedUser, expectedOrUser) &&
+           constantTimeEqual(providedPass, maybePass);
+  }
+
+  // expected can be {user,pass} or [{user,pass}, ...]
+  const expected = expectedOrUser;
+  if (Array.isArray(expected)) {
+    return expected.some(
+      ({ user, pass }) =>
+        constantTimeEqual(providedUser, user) &&
+        constantTimeEqual(providedPass, pass)
+    );
+  } else if (expected && typeof expected === "object") {
+    return constantTimeEqual(providedUser, expected.user) &&
+           constantTimeEqual(providedPass, expected.pass);
+  }
+  return false;
 }
 
 // Constant time string comparison
