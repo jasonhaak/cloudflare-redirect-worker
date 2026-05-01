@@ -35,29 +35,29 @@ Cloudflare always requires a code source (repository or ZIP) to deploy a Worker.
 
 ### 2. Add a Worker in Cloudflare
 - Log in to the [Cloudflare Dashboard](https://dash.cloudflare.com/).
-- Navigate to **Workers & Pages → Workers** and create a new Worker with the name `cloudflare-redirect-worker`.
+- Navigate to **Workers & Pages -> Workers** and create a new Worker with the name `cloudflare-redirect-worker`.
 
 ### 3. Add Environment Variables
 > **Note**: See the [Environment Variables](#environment-variables) section below for variable descriptions and an example configuration.
 
 There are multiple ways to provide environment variables for your Worker:
-- Set them directly in the Cloudflare Dashboard (**Worker → Settings → Variables & Secrets**). This keeps sensitive values out of your source code and version control.
+- Set them directly in the Cloudflare Dashboard (**Worker -> Settings -> Variables & Secrets**). This keeps sensitive values out of your source code and version control.
 - You can define them in your `wrangler.toml` file (not recommended for secrets or sensitive data if your repository is public).
 - You can deliver them through your CI/CD pipeline or other deployment automation.
 
 > **Important:** If you deploy using **GitHub/GitLab integration**, any variables set in the Cloudflare Dashboard as plain text or JSON will be **overwritten** during deployment.  
 > To prevent this:
-> - Option 1: Add `--keep-vars` to your deployment command in Settings → Build → Deploy command (e.g., `npx wrangler deploy --keep-vars`).
+> - Option 1: Add `--keep-vars` to your deployment command in **Settings -> Build -> Deploy** command (e.g., `npx wrangler deploy --keep-vars`).
 > - Option 2: Set your variables as *secrets* in the Dashboard, which are always preserved.
 
-### 4. Deploy via the Cloudflare Dashboard
+### 4. Deploy
 - **Git**: Connect your forked repository directly to your GitHub/GitLab account in the Cloudflare Dashboard. Cloudflare will build and deploy automatically.
 - **ZIP**: Upload your prepared ZIP file using the Dashboard’s editor or deployment UI.
 
-> **Important:** When using Cloudflare Git integration, go to **Settings → Build > Branch Control** in your Worker project. Make sure to **deactivate** (uncheck) the option for enabling builds for non-production branches. If this setting is active, any push to your `develop` (or other non-production) branch will trigger a deployment to your Worker, which may not be desired for production stability.
+> **Important:** When using Cloudflare Git integration, go to **Settings -> Build -> Branch Control** in your Worker project. Make sure to **deactivate** (uncheck) the option for enabling builds for non-production branches. If this setting is active, any push to your `develop` (or other non-production) branch will trigger a deployment to your Worker, which may not be desired for production stability.
 
 ### 5. Update DNS
-- Navigate to **Settings → Routes** and add a domain or route for the Worker.
+- Navigate to **Settings -> Routes** and add a domain or route for the Worker.
 - Point DNS records for your subdomains to the Worker you configured.
 
 ## Environment Variables
@@ -71,20 +71,20 @@ There are multiple ways to provide environment variables for your Worker:
     - Redirect target URL for each subdomain
     - Example: `LINK_FOO` for `foo.example.com`
     - Multi-level subdomains: Dots are replaced with underscores
-    - Example: `api.v1.example.com` → `LINK_API_V1`
+    - Example: `api.v1.example.com` -> `LINK_API_V1`
 - **Basic Auth User/Password Support:**
     - You can protect a subdomain with either a single user/password or multiple user/password pairs:
     - **Single user/password:**
         - `USER_<SUBDOMAIN>`, `PASS_<SUBDOMAIN>`
         - Example: `USER_FOO`, `PASS_FOO` for `foo.example.com`
         - Multi-level subdomains: Dots are replaced with underscores
-        - Example: `api.v1.example.com` → `USER_API_V1`, `PASS_API_V1`
+        - Example: `api.v1.example.com` -> `USER_API_V1`, `PASS_API_V1`
     - **Multiple user/password pairs:**
         - `USERS_<SUBDOMAIN>`
         - JSON array of user/pass objects for a subdomain
         - Example: `USERS_FOO = '[{"user":"alice","pass":"pw1"},{"user":"bob","pass":"pw2"}]'`
         - Multi-level subdomains: Dots are replaced with underscores
-        - Example: `api.v1.example.com` → `USERS_API_V1`
+        - Example: `api.v1.example.com` -> `USERS_API_V1`
         - If present, this takes precedence over `USER_<SUBDOMAIN>`/`PASS_<SUBDOMAIN>`
 - `FALLBACK_USER`, `FALLBACK_PASS`
     - Optional fallback credentials if specific subdomain credentials are not set
@@ -135,7 +135,7 @@ FALLBACK_PASS = "fallback_password"
     - You can set environment variables in your `wrangler.toml` file or via the Cloudflare dashboard.
 4. **Deploy the Worker**
     ```bash
-    wrangler deploy
+    npm run deploy
     ```
 
 ## Testing
