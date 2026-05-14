@@ -136,7 +136,7 @@ FALLBACK_PASS = "fallback_password"
     ```
     
 3. **Configure Environment Variables**
-    - You can set environment variables in your `wrangler.toml` file or via the Cloudflare dashboard.
+    - You can set environment variables in your `wrangler.toml` file.
 
 4. **Test the Worker Locally**
     ```bash
