@@ -35,7 +35,7 @@ Cloudflare always requires a code source (repository or ZIP) to deploy a Worker.
 
 ### 2. Add a Worker in Cloudflare
 1. Log in to the [Cloudflare Dashboard](https://dash.cloudflare.com/).
-2. Navigate to **Workers & Pages -> Workers** and create a new Worker with the name `cloudflare-redirect-worker`.
+2. Navigate to **Workers & Pages -> Workers** and create a new Worker with the name `redirect-worker`.
 
 ### 3. Add Environment Variables
 > **Note**: See the [Environment Variables](#environment-variables) section below for variable descriptions and an example configuration.
