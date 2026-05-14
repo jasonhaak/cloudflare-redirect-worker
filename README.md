@@ -129,19 +129,22 @@ FALLBACK_PASS = "fallback_password"
     git clone https://github.com/jasonhaak/cloudflare-redirect-worker.git
     cd cloudflare-redirect-worker
     ```
+    
 2. **Install Dependencies**
     ```bash
     npm install
     ```
+    
 3. **Configure Environment Variables**
     - You can set environment variables in your `wrangler.toml` file or via the Cloudflare dashboard.
-4. **Deploy the Worker**
+
+4. **Test the Worker Locally**
     ```bash
-    npm run deploy
+    npm wrangler dev
     ```
 
 ## Testing
-This project uses **Vitest** for unit tests. Run the suite locally:
+This project uses `Vitest` for unit tests. Run the suite locally:
 
 ```bash
 npm test
