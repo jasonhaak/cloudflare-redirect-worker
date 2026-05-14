@@ -1,7 +1,7 @@
-# cloudflare-redirect-worker
-[![Release](https://img.shields.io/github/v/release/jasonhaak/cloudflare-redirect-worker)](https://github.com/jasonhaak/cloudflare-redirect-worker/releases/latest)
-[![CI](https://img.shields.io/github/actions/workflow/status/jasonhaak/cloudflare-redirect-worker/ci.yml?branch=main&logo=github)](https://github.com/jasonhaak/cloudflare-redirect-worker/actions/workflows/ci.yml)
-[![Coverage](https://codecov.io/github/jasonhaak/cloudflare-redirect-worker/graph/badge.svg?token=OJ2SFEQQAW)](https://codecov.io/github/jasonhaak/cloudflare-redirect-worker)
+# redirect-worker
+[![Release](https://img.shields.io/github/v/release/jasonhaak/redirect-worker)](https://github.com/jasonhaak/redirect-worker/releases/latest)
+[![CI](https://img.shields.io/github/actions/workflow/status/jasonhaak/redirect-worker/ci.yml?branch=main&logo=github)](https://github.com/jasonhaak/redirect-worker/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/github/jasonhaak/redirect-worker/graph/badge.svg?token=OJ2SFEQQAW)](https://codecov.io/github/jasonhaak/redirect-worker)
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare)](https://workers.cloudflare.com/)
 
 A Cloudflare Worker for secure, configurable HTTP redirects by subdomain.  It routes requests for specific subdomains (for example `foo.example.com`) to target URLs (for example `secure.com`).  It also provides optional Basic Auth with support for both single and multiple user/password pairs, rate limiting and security headers.
@@ -126,8 +126,8 @@ FALLBACK_PASS = "fallback_password"
 ## Installation & Development
 1. **Clone the Repository**
     ```bash
-    git clone https://github.com/jasonhaak/cloudflare-redirect-worker.git
-    cd cloudflare-redirect-worker
+    git clone https://github.com/jasonhaak/redirect-worker.git
+    cd redirect-worker
     ```
     
 2. **Install Dependencies**
